@@ -1,0 +1,42 @@
+# Dataset and derived data
+data/*
+!data/README.md
+*.csv
+*.xlsx
+*.xls
+*.parquet
+*.feather
+*.pkl
+*.npz
+
+# Source-data scripts
+fills.py
+recall.py
+build_table.py
+build_xlsx.py
+data_private/
+
+# Aircraft-level model and per-aircraft outputs effectively encode the table
+models/*
+!models/README.md
+!models/role_*.txt
+!models/type_*.txt
+results/**/per_aircraft*
+results/**/*aircraft_confusion*
+
+# Private docs
+docs/PREPROCESSING_NOTICE.md
+
+# Python / Jupyter
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

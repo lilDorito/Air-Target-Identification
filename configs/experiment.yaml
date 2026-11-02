@@ -1,0 +1,41 @@
+data_path: data/targets.csv
+
+seeds:
+  train: 101
+  val: 202
+  test: 303
+  shifted_test: 404
+  model: 42
+  family_split: 7
+
+samples_per_aircraft:
+  train: 200
+  val: 50
+  test: 50
+  shifted_test: 50
+
+sampling:
+  speed: triangular # min .. max, mode at cruise
+  altitude: uniform
+  climb_turn_skew: 3.0 # higher = more mass near zero
+  rcs: log_uniform
+noise:
+  speed_rel: 0.05
+  altitude_rel: 0.10
+  rcs_db: 3.0
+shifted_test:
+  speed: uniform
+  noise_multiplier: 2.0
+
+unseen_experiment:
+  group_column: family
+  n_splits: 5
+
+lightgbm:
+  n_estimators: 500
+  learning_rate: 0.05
+  num_leaves: 31
+  class_weight_for: [role, type]
+
+calibration: isotonic # fitted on the validation set
+ablation_drop_estimated: true
