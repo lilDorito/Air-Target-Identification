@@ -5,13 +5,14 @@ never_inputs: [name, manufacturer, callsign, family, country, type, role, ua_war
 
 scenarios:
   A_radar:
-    numeric: [speed_min_kmh, speed_cruise_kmh, speed_max_kmh, alt_min_m, alt_max_m,
-              climb_max_ms, turn_rate_max_dps, rcs_min_m2, rcs_max_m2]
+    numeric: [speed, altitude, climb_rate, turn_rate, rcs]
     categorical: []
+
   B_radar_sensors:
     extends: A_radar
     numeric: [engine_count]
     categorical: [engine_type, afterburner, ir_category]
+
   C_all:
     extends: B_radar_sensors
     numeric: [length_m, wingspan_m, mtow_kg, first_flight]
