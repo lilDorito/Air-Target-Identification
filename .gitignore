@@ -21,6 +21,7 @@ models/*
 !models/README.md
 !models/role_*.txt
 !models/type_*.txt
+!results/metrics/*.csv
 results/**/per_aircraft*
 results/**/*aircraft_confusion*
 

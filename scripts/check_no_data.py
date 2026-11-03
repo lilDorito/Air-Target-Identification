@@ -10,4 +10,4 @@ bad = [f for f in staged if f.endswith(BLOCKED_EXT) or f.split("/")[-1] in BLOCK
 if bad:
     print("Blocked: data-like files staged:\n  " + "\n  ".join(bad))
     sys.exit(1)
-print("OK: no data-like files staged.")
+print("OK: no data-like files staged")

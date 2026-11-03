@@ -48,7 +48,7 @@ pip install -r requirements.txt
 jupyter nbconvert --to notebook --execute notebooks/main.ipynb
 ```
 
-All seeds and settings are in [`configs/`](configs/). Tested with Python 3.11 (_TODO: confirm_).
+All seeds and settings are in [`configs/`](configs/). Tested with Python 3.12.
 
 ## 8. AI use
 

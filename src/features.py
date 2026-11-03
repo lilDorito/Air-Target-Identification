@@ -1,4 +1,5 @@
 # Select scenario columns and encode them
+
 import pandas as pd
 
 ENGINE_TYPES = [
@@ -31,19 +32,13 @@ def encode(X):
     X = X.copy()
 
     if "afterburner" in X.columns:
-        X["afterburner"] = X["afterburner"].map({
-            "yes": 1,
-            "no": 0
-        })
+        X["afterburner"] = X["afterburner"].map({"yes": 1, "no": 0})
 
     if "ir_category" in X.columns:
         X["ir_category"] = X["ir_category"].map(IR_CATEGORIES)
 
     if "engine_type" in X.columns:
-        X["engine_type"] = pd.Categorical(
-            X["engine_type"],
-            categories=ENGINE_TYPES
-        )
+        X["engine_type"] = pd.Categorical(X["engine_type"], categories=ENGINE_TYPES)
 
     return X
 

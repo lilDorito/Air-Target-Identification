@@ -1,3 +1,6 @@
+# Load the dataset
+
+import re
 import pandas as pd
 
 REQUIRED_COLUMNS = {
@@ -37,7 +40,7 @@ def estimated_mask(df):
         cols = row["estimated_fields"]
 
         if pd.notna(cols):
-            for col in cols.split("."):
+            for col in re.split(r"[,.]", cols):
                 col = col.strip()
                 if col not in mask.columns:
                     raise ValueError(f"Unknown estimated column: {col}")
