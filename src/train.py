@@ -53,13 +53,13 @@ def lgb_params(cfg, n_classes, overrides=None):
 def train_one(X_train, y_train, X_val, y_val, cfg, target, n_classes, params=None, num_boost_round=None):
     lgb_cfg = cfg["lightgbm"]
     weights = balanced_weights(y_train, n_classes) if target in lgb_cfg.get("class_weight_for", []) else None
-    dtrain = lgb.Dataset(X_train, y_train, weight=weights, free_raw_data=False)
     params = lgb_params(cfg, n_classes, params)
+    dtrain = lgb.Dataset(X_train, y_train, weight=weights, params=params, free_raw_data=False)
 
     if num_boost_round is not None:
         return lgb.train(params, dtrain, num_boost_round=num_boost_round)
 
-    dval = lgb.Dataset(X_val, y_val, reference=dtrain)
+    dval = lgb.Dataset(X_val, y_val, reference=dtrain, params=params)
     return lgb.train(
         params, dtrain,
         num_boost_round=lgb_cfg["n_estimators"],
