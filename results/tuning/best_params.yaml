@@ -68,3 +68,13 @@ aircraft_A_radar:
   lambda_l2: 7.9352183075128195
   max_delta_step: 0.7627053745963738
   max_bin: 63
+aircraft_B_radar_sensors:
+  learning_rate: 0.1563184627345561
+  num_leaves: 17
+  min_data_in_leaf: 86
+  feature_fraction: 0.8653637852942242
+  bagging_fraction: 0.8688960106683165
+  bagging_freq: 6
+  lambda_l2: 40.26875963054345
+  max_delta_step: 1.572334164201964
+  max_bin: 127

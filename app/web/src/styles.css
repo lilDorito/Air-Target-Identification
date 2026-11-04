@@ -180,3 +180,5 @@ button.link { border: 0; padding: 4px 2px; color: var(--accent); text-decoration
 @media (prefers-reduced-motion: reduce) {
   .bar span { animation: none; }
 }
+
+.ranking .name .kind { color: var(--ink-soft); font-size: 0.85rem; margin-left: 6px; }

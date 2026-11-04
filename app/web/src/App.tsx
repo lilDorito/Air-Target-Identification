@@ -21,6 +21,29 @@ const FIELDS: Record<string, FieldDef> = {
 
 const RADAR = ["speed", "altitude", "climb_rate", "turn_rate", "rcs"];
 
+const TYPE_WORD: Record<string, string> = {
+  "Fighter-class fixed-wing": "fighter-class jet",
+  "Heavy fixed-wing": "large aircraft",
+  "Rotary-wing": "helicopter",
+  UAV: "drone",
+  "Missile/munition": "missile",
+};
+
+const ROLE_TYPE: Record<string, string> = {
+  "Air superiority fighter": "Fighter-class fixed-wing", Interceptor: "Fighter-class fixed-wing",
+  "Multirole fighter": "Fighter-class fixed-wing", "Strike fighter": "Fighter-class fixed-wing",
+  "CAS/attack": "Fighter-class fixed-wing", "EW/SEAD": "Fighter-class fixed-wing",
+  Reconnaissance: "Fighter-class fixed-wing", "Tactical bomber": "Fighter-class fixed-wing",
+  "Trainer/light combat": "Fighter-class fixed-wing",
+  "AEW&C": "Heavy fixed-wing", Bomber: "Heavy fixed-wing", "Maritime patrol": "Heavy fixed-wing",
+  "Special mission (ISR/EW)": "Heavy fixed-wing", Tanker: "Heavy fixed-wing", Transport: "Heavy fixed-wing",
+  Attack: "Rotary-wing", "Naval/ASW": "Rotary-wing", "Utility/transport": "Rotary-wing",
+  CCA: "UAV", Decoy: "UAV", "MALE/HALE": "UAV", "One-way attack": "UAV", "Tactical recon": "UAV",
+  "Anti-radiation": "Missile/munition", "Anti-ship": "Missile/munition", "Land-attack": "Missile/munition",
+};
+
+const roleKind = (role: string) => TYPE_WORD[ROLE_TYPE[role]] ?? "";
+
 const SCENARIO_TEXT: Record<string, { name: string; about: string }> = {
   A_radar: { name: "Radar only", about: "Kinematics and radar cross-section from a single radar." },
   B_radar_sensors: { name: "Radar and sensors", about: "Adds engine and heat cues from IR or optical sensors." },
@@ -55,7 +78,10 @@ function Bars({ items, title, source }: { items: Ranked[]; title: string; source
       <ol>
         {items.map((item, i) => (
           <li key={item.label} className={i === 0 ? "lead" : undefined}>
-            <span className="name">{item.label}</span>
+            <span className="name">
+              {item.label}
+              {title === "Role" && roleKind(item.label) && <span className="kind">{roleKind(item.label)}</span>}
+            </span>
             <span className="bar" aria-hidden="true">
               <span style={{ width: `${Math.max(item.probability * 100, 0.8)}%` }} />
             </span>
@@ -126,10 +152,19 @@ export default function App() {
   if (metaError)
     return (
       <main className="shell">
-        <p className="notice warn">
-          The identification service is not reachable ({metaError}). Start it with{" "}
-          <code>uvicorn app.api.main:app</code> from the repository root, then reload this page.
-        </p>
+        {import.meta.env.DEV ? (
+          <p className="notice warn">
+            The identification service is not reachable ({metaError}). Start it with{" "}
+            <code>uvicorn app.api.main:app</code> from the repository root, then reload this page.
+          </p>
+        ) : (
+          <p className="notice warn">
+            The identification service is not responding. It may be waking up, which takes about a minute.{" "}
+            <button type="button" className="link" onClick={() => window.location.reload()}>
+              Try again
+            </button>
+          </p>
+        )}
       </main>
     );
 
@@ -313,7 +348,7 @@ export default function App() {
                   leadRole && (
                     <>
                       <p className="readout-name">{leadRole.label}</p>
-                      <p className="readout-detail">{result.type?.top[0]?.label}</p>
+                      <p className="readout-detail">{roleKind(leadRole.label) || result.type?.top[0]?.label}</p>
                       <p className="readout-p">{pct(leadRole.probability)}</p>
                     </>
                   )
