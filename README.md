@@ -101,7 +101,7 @@ cd app/web && npm install && npm run dev # http://localhost:5173
 
 ## 9. AI use
 
-See [`AI_DISCLOSURE.md`](AI_DISCLOSURE.md).
+See [`data/AI_DISCLOSURE.md`](data/AI_DISCLOSURE.md).
 
 ## 10. Authors
 
