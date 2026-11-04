@@ -83,15 +83,16 @@ def run(spec_df, cfg, targets=None, scenarios=None, ablation=False, tuned_params
     return evaluate.compare(rows), artefacts
 
 
-def filter_check(artefact, spec_df, selected, country_groups=None):
-    # country filter on the aircraft model
+def filter_check(artefact, spec_df, selected):
+    # operator filter on the aircraft model
+    # scored on test rows of aircraft the selected countries operate, before and after masking
 
     classes, proba, y = artefact["classes"], artefact["proba"], artefact["y"]
-    country_of = dict(zip(spec_df["name"], spec_df["country"]))
-    allowed = country_filter.allowed_mask(classes, country_of, selected, country_groups)
+    operators_of = dict(zip(spec_df["name"], spec_df["operators"]))
+    allowed = country_filter.allowed_mask(classes, operators_of, selected)
     keep = allowed[y]
     before = evaluate.score(proba[keep], y[keep])
-    after = evaluate.score(country_filter.filter_probs(proba[keep], classes, country_of, selected, country_groups), y[keep])
+    after = evaluate.score(country_filter.filter_probs(proba[keep], classes, operators_of, selected), y[keep])
     return pd.DataFrame([{"selection": "+".join(selected), "filter": "off", "n_classes": len(classes), **before}, {"selection": "+".join(selected), "filter": "on", "n_classes": int(allowed.sum()), **after}])
 
 

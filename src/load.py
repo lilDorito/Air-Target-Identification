@@ -4,7 +4,7 @@ import re
 import pandas as pd
 
 REQUIRED_COLUMNS = {
-    "name", "role", "type",
+    "name", "role", "type", "operators",
     "speed_min_kmh", "speed_cruise_kmh", "speed_max_kmh",
     "alt_min_m", "alt_max_m",
     "climb_max_ms", "turn_rate_max_dps",

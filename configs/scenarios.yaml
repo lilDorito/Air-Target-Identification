@@ -1,6 +1,6 @@
 # input columns per sensor scenario
 
-never_inputs: [name, manufacturer, callsign, family, country, type, role, ua_war, status,
+never_inputs: [name, manufacturer, callsign, family, country, operators, type, role, ua_war, status,
                flight_profile, sources, estimated_fields, notes]
 
 scenarios:

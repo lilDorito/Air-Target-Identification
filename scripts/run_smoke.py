@@ -24,7 +24,7 @@ print("splits:", {k: v.shape for k, v in splits.items()})
 res, art = pipeline.run(df, cfg, targets=["type", "name"], scenarios=["A_radar"], splits=splits)
 cols = ["target", "scenario", "model", "split", "top1", "top5", "log_loss"]
 print(res[cols].round(3).to_string(index=False))
-print(pipeline.filter_check(art[("name", "A_radar")], df, ["Russia"], cfg["country_groups"])[["filter", "n_classes", "top1", "top5"]].round(3).to_string(index=False))
+print(pipeline.filter_check(art[("name", "A_radar")], df, ["Russia"])[["filter", "n_classes", "top1", "top5"]].round(3).to_string(index=False))
 abl, _ = pipeline.run(df, cfg, targets=["type"], scenarios=["A_radar"], splits=None, ablation=True, with_baselines=False)
 print("ablation ran:", len(abl), "rows")
 print("unseen families ran:", len(pipeline.unseen_families(df, cfg, "A_radar", "type", num_boost_round=20)), "folds")

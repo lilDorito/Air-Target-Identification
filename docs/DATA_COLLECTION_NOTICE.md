@@ -31,7 +31,8 @@ The dataset supports a classification study: *how well can an air target be iden
 
 | Group | Columns | Model input? |
 |---|---|---|
-| Identity | `name`, `manufacturer`, `callsign`, `family`, `country` | **Never.** Output strings for display. `family` is used for grouped validation and `country` for output filtering. |
+| Identity | `name`, `manufacturer`, `callsign`, `family`, `country` | **Never.** Output strings for display. `family` is used for grouped validation. `country` is the country of origin, display only. |
+| Operators | `operators` | **Never.** States that field the type today, `;`-separated. Used only by the operator filter at prediction time. |
 | Labels | `type`, `role` (and `name` for the identification task) | Targets |
 | Context | `ua_war`, `status`, `first_flight` | `first_flight` only in the full-feature scenario |
 | Radar-observable | speed min/cruise/max, altitude min/max, max climb, max turn rate, RCS min/max | Yes |
@@ -135,6 +136,16 @@ A small number of OSINT-typical values (for example glide-bomb release speeds an
 
 **In total:** 99.5% of feature cells are filled, and about 36% of the filled cells are Tier 3 estimates. Most of these are RCS, turn rate, climb and minimum altitude.
 
+### Operators (filter column)
+
+`operators` lists the states whose forces **field the type today** (reference date November 2026), including wartime transfers: Ukraine lists the F-16AM, Mirage 2000-5F, Storm Shadow and Bayraktar TB2, and Russia lists the Shahed-derived Geran family and the North Korean Hwasong-11. Prototypes list the developing state. Types nobody operates any more are left empty (143 rows), so they drop out as soon as a filter is on. Dissolved states (USSR, Czechoslovakia, Yugoslavia, West Germany) never appear here; they remain only as `country` of origin. Non-state users are not listed.
+
+- **Source:** AI recall of operator lists (same assistant as Tier 2), November 2026. 116 states appear.
+- **Checked live:** a few high-impact, recently changed entries. Ukraine's Gripen is not listed (first deliveries expected in early 2027). Iran is listed for the Su-35 (first deliveries reported in August 2026). A reported Ukrainian AW101 could not be confirmed, so it was removed.
+- **Known weaknesses:** lists for widely exported types (C-130, Mi-8/17, F-16, AH-64, Harpoon) are long and may miss small operators or keep ones that retired recently. Retirement dates of old types (F-4E, MiG-21, F-5) change often.
+
+The models never see this column, so correcting it needs no retraining: edit the CSV and restart the API.
+
 ## 4. Collection principles
 
 1. **Sourced beats recalled, and recalled beats estimated.**
@@ -153,7 +164,7 @@ A small number of OSINT-typical values (for example glide-bomb release speeds an
 - **Near-identical variants.** Licensed copies and close derivatives (e.g. Su-27S / J-11B, Su-30SM / J-16) have nearly identical specifications and cannot be separated from kinematics alone.
 - **Coverage bias.** Western and Soviet/Russian types are better documented than Chinese, Iranian or new Ukrainian systems. Secretive systems carry more estimates.
 - **Labels involve judgment.** Multirole aircraft and missile roles are assigned by designed mission, a documented rule rather than an objective fact.
-- **Snapshot in time.** New variants (e.g. Geran-4/5) are described from 2025–26 intelligence reporting that is still evolving.
+- **Snapshot in time.** New variants (e.g. Geran-4/5) are described from 2025–26 intelligence reporting that is still evolving. Operator lists change with every transfer and retirement.
 
 ## 6. Tools
 

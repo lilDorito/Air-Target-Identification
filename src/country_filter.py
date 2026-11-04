@@ -1,40 +1,39 @@
-# Restrict predictions to selected countries by masking and renormalising
+# Restrict predictions to aircraft operated by selected countries
 
 import numpy as np
 import pandas as pd
 
 
-def _origin_set(country_value):
-    if pd.isna(country_value):
+def _operator_set(value):
+    if pd.isna(value):
         return set()
-    return {part.strip() for part in str(country_value).split("/") if part.strip()}
+    return {part.strip() for part in str(value).split(";") if part.strip()}
 
 
-def expand_selection(selected, country_groups=None):
-    # expand user-selected names with configured groups
+def operator_list(values):
+    # every state that appears in an operators column, sorted (for the country picker)
 
-    expanded = set()
-    groups = country_groups or {}
-    for name in selected:
-        expanded.add(name)
-        expanded.update(groups.get(name, []))
-    return expanded
+    names = set()
+    for value in values:
+        names.update(_operator_set(value))
+    return sorted(names)
 
 
-def allowed_mask(classes, country_of, selected, country_groups=None):
+def allowed_mask(classes, operators_of, selected):
     # bool array over model classes
-    # true if the aircraft's origin matches the selection
+    # true if any selected country operates the aircraft
+    # types with no current operator are never allowed once a filter is on
 
-    wanted = expand_selection(selected, country_groups)
-    return np.array([bool(_origin_set(country_of.get(c)) & wanted) for c in classes])
+    wanted = set(selected)
+    return np.array([bool(_operator_set(operators_of.get(c)) & wanted) for c in classes])
 
 
-def filter_probs(proba, classes, country_of, selected, country_groups=None):
-    # zero out aircraft from other countries and renormalise each row to 1
-    
-    mask = allowed_mask(classes, country_of, selected, country_groups)
+def filter_probs(proba, classes, operators_of, selected):
+    # zero out aircraft nobody in the selection operates and renormalise each row to 1
+
+    mask = allowed_mask(classes, operators_of, selected)
     if not mask.any():
-        raise ValueError(f"No aircraft match the selection {sorted(selected)}")
+        raise ValueError(f"No aircraft are operated by {sorted(selected)}")
     filtered = np.where(mask, proba, 0.0)
     total = filtered.sum(axis=1, keepdims=True)
     uniform = mask / mask.sum()

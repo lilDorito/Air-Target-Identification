@@ -22,6 +22,7 @@ def spec():
     return pd.DataFrame({
         "id": [1, 2, 3, 4], "name": ["A1", "A2", "B1", "C1"], "family": ["A", "A", "B", "C"],
         "country": ["USA", "USSR", "Iran/Russia", "France"],
+        "operators": ["USA;Ukraine", "Russia;Ukraine", "Russia;Iran", None],
         "role": ["fighter", "fighter", "drone", "bomber"], "type": ["jet", "jet", "uav", "jet"],
         "speed_min_kmh": [200, 220, 100, 250], "speed_cruise_kmh": [900, 850, 150, 800],
         "speed_max_kmh": [2000, 1900, 180, 1000], "alt_min_m": [50, 50, 60, 150],
@@ -70,14 +71,23 @@ def test_scenarios_never_use_forbidden_columns(cfg):
         assert not set(features.scenario_columns(cfg, scenario)) & set(cfg["never_inputs"])
 
 
-def test_country_filter_renormalises_and_matches_multi_origin(spec):
+def test_operator_filter_renormalises_and_ignores_origin(spec):
     classes = list(spec["name"])
-    country_of = dict(zip(spec["name"], spec["country"]))
+    operators_of = dict(zip(spec["name"], spec["operators"]))
     proba = np.full((2, 4), 0.25)
-    out = country_filter.filter_probs(proba, classes, country_of, ["Russia"], {"Russia": ["USSR"]})
+    out = country_filter.filter_probs(proba, classes, operators_of, ["Ukraine"])
     np.testing.assert_allclose(out.sum(axis=1), 1.0)
-    assert out[0, 0] == 0 and out[0, 3] == 0
-    assert out[0, 1] > 0 and out[0, 2] > 0
+    assert out[0, 0] > 0 and out[0, 1] > 0
+    assert out[0, 2] == 0 and out[0, 3] == 0
+
+
+def test_operator_filter_drops_retired_and_dead_states(spec):
+    classes = list(spec["name"])
+    operators_of = dict(zip(spec["name"], spec["operators"]))
+    assert not country_filter.allowed_mask(classes, operators_of, ["Russia"])[3]
+    assert country_filter.operator_list(spec["operators"]) == ["Iran", "Russia", "USA", "Ukraine"]
+    with pytest.raises(ValueError):
+        country_filter.filter_probs(np.full((1, 4), 0.25), classes, operators_of, ["USSR"])
 
 
 def test_aggregate_sums_to_one(spec):

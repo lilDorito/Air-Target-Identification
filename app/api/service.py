@@ -55,7 +55,7 @@ class Service:
 
         has_aircraft = any(t == "name" for t, _ in service.models)
         if has_aircraft and data_path.exists() and not force_public:
-            columns = ["name", "manufacturer", "callsign", "country", "role", "type"]
+            columns = ["name", "manufacturer", "callsign", "country", "operators", "role", "type"]
             service.roster = pd.read_csv(data_path, usecols=columns).set_index("name")
             service.mode = "full"
         else:
@@ -73,13 +73,10 @@ class Service:
         return out
 
     def countries(self):
+        # states that operate at least one type today (full mode only)
         if self.mode != "full":
             return []
-        names = set()
-        for value in self.roster["country"].dropna():
-            names.update(part.strip() for part in str(value).split("/"))
-        names.update(self.cfg.get("country_groups", {}))
-        return sorted(names)
+        return country_filter.operator_list(self.roster["operators"])
 
     # inference
 
@@ -113,9 +110,10 @@ class Service:
         if self.mode == "full" and ("name", scenario) in self.models:
             classes, proba = self._proba("name", scenario, observations)
             if countries:
-                country_of = self.roster["country"].to_dict()
-                proba = country_filter.filter_probs(proba[None, :], classes, country_of, countries, self.cfg.get("country_groups"))[0]
-            details = self.roster.loc[classes]
+                operators_of = self.roster["operators"].to_dict()
+                proba = country_filter.filter_probs(proba[None, :], classes, operators_of, countries)[0]
+            # operators list stays server-side, candidates only carry name, callsign, maker, origin, role, type
+            details = self.roster.loc[classes].drop(columns="operators")
             result["aircraft"] = [{**row, **{k: (None if pd.isna(v) else v) for k, v in details.loc[row["label"]].items()}} for row in self._top(classes, proba, top_k)]
             if countries:
                 for target in ("role", "type"):

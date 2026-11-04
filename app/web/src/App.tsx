@@ -100,6 +100,8 @@ export default function App() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [track, setTrack] = useState<Observation[]>([]);
   const [countries, setCountries] = useState<string[]>([]);
+  const [countryQuery, setCountryQuery] = useState("");
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [result, setResult] = useState<Prediction | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -118,6 +120,12 @@ export default function App() {
   const current = cleanObservation(values, inputs);
   const hasCurrent = Object.keys(current).length > 0;
   const full = meta?.mode === "full";
+  // selected countries stay on top, the rest is narrowed by the search box
+  const query = countryQuery.trim().toLowerCase();
+  const shownCountries = [
+    ...countries,
+    ...(meta?.countries ?? []).filter((c) => !countries.includes(c) && (!query || c.toLowerCase().includes(query))),
+  ];
 
   function changeScenario(id: string) {
     setScenarioId(id);
@@ -276,13 +284,22 @@ export default function App() {
           </div>
 
           {full && meta!.countries.length > 0 && (
-            <details className="origins" open={countries.length > 0}>
+            <details className="origins" open={pickerOpen} onToggle={(e) => setPickerOpen(e.currentTarget.open)}>
               <summary>
-                Limit to origins
-                <span className="muted">{countries.length ? countries.join(", ") : "all origins considered"}</span>
+                Limit to operators
+                <span className="muted">{countries.length ? countries.join(", ") : "every country considered"}</span>
               </summary>
-              <div className="chips" role="group" aria-label="Origins">
-                {meta!.countries.map((c) => {
+              <p className="muted">Keeps only the types these countries fly today, wherever they were built.</p>
+              <input
+                type="search"
+                className="picker-search"
+                placeholder="Find a country"
+                aria-label="Find a country"
+                value={countryQuery}
+                onChange={(e) => setCountryQuery(e.target.value)}
+              />
+              <div className="chips" role="group" aria-label="Operators">
+                {shownCountries.map((c) => {
                   const on = countries.includes(c);
                   return (
                     <button
@@ -296,7 +313,15 @@ export default function App() {
                     </button>
                   );
                 })}
+                {shownCountries.length === countries.length && countryQuery && (
+                  <span className="muted">No operator matches “{countryQuery}”.</span>
+                )}
               </div>
+              {countries.length > 0 && (
+                <button type="button" className="link" onClick={() => setCountries([])}>
+                  Clear selection
+                </button>
+              )}
             </details>
           )}
 
@@ -331,7 +356,7 @@ export default function App() {
               <div className="readout" key={JSON.stringify(result)}>
                 <p className="readout-context">
                   Most likely, from {result.snapshots} {result.snapshots === 1 ? "snapshot" : "snapshots"}
-                  {result.filter ? `, origins limited to ${result.filter.join(", ")}` : ""}
+                  {result.filter ? `, operated by ${result.filter.join(", ")}` : ""}
                 </p>
                 {lead ? (
                   <>
