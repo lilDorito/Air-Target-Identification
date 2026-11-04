@@ -1,6 +1,5 @@
 # Dataset and derived data
 data/*
-!data/README.md
 *.csv
 *.xlsx
 *.xls
@@ -16,17 +15,19 @@ build_table.py
 build_xlsx.py
 data_private/
 
-# Aircraft-level model and per-aircraft outputs effectively encode the table
+# Aircraft-level model and per-aircraft outputs
 models/*
-!models/README.md
 !models/role_*.txt
 !models/type_*.txt
+!models/role_*.json
+!models/type_*.json
 !results/metrics/*.csv
 results/**/per_aircraft*
 results/**/*aircraft_confusion*
 
 # Private docs
 docs/PREPROCESSING_NOTICE.md
+app/DEPLOY.md
 
 # Python / Jupyter
 __pycache__/
@@ -35,9 +36,13 @@ __pycache__/
 .venv/
 venv/
 .env
+.pytest_cache
 
 # OS / editors
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+
+public_models.zip
+.env.local

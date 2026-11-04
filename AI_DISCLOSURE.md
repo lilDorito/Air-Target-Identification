@@ -4,8 +4,7 @@
 
 | Tool | Used for |
 |---|---|
-| Claude (Anthropic) | Data collection & verification, .md document refactorying & stylization |
-| _other_ | |
+| Claude (Anthropic) | Data collection & verification, .md document / code refactorying & stylization, consulting on decisions and deployment strategy |
 
 ## 2. Influence on methodological decisions
 

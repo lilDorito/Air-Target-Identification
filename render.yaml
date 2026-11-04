@@ -1,0 +1,19 @@
+# Render Blueprint for the PUBLIC API
+
+services:
+  - type: web
+    name: air-target-id-api
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r app/api/requirements.txt && python scripts/fetch_models.py
+    startCommand: uvicorn app.api.main:app --host 0.0.0.0 --port $PORT --proxy-headers
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: FORCE_PUBLIC
+        value: "1"
+      - key: MODELS_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false

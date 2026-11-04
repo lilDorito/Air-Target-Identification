@@ -1,0 +1,19 @@
+{
+ "target": "type",
+ "scenario": "A_radar",
+ "classes": [
+  "Fighter-class fixed-wing",
+  "Heavy fixed-wing",
+  "Missile/munition",
+  "Rotary-wing",
+  "UAV"
+ ],
+ "temperature": 1.035155324893399,
+ "features": [
+  "speed",
+  "altitude",
+  "climb_rate",
+  "turn_rate",
+  "rcs"
+ ]
+}

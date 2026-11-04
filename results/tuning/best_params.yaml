@@ -1,0 +1,70 @@
+role_A_radar:
+  learning_rate: 0.0249064396938244
+  num_leaves: 26
+  min_data_in_leaf: 72
+  feature_fraction: 0.7760609974958406
+  bagging_fraction: 0.6488152939379115
+  bagging_freq: 3
+  lambda_l2: 0.5857968696153528
+  max_delta_step: 3.874121625621054
+  max_bin: 127
+role_B_radar_sensors:
+  learning_rate: 0.06807560967954167
+  num_leaves: 15
+  min_data_in_leaf: 72
+  feature_fraction: 0.8645471049783949
+  bagging_fraction: 0.9763002307160322
+  bagging_freq: 4
+  lambda_l2: 0.7143378179060605
+  max_delta_step: 3.750726464404604
+  max_bin: 511
+role_C_all:
+  learning_rate: 0.14660852110704561
+  num_leaves: 104
+  min_data_in_leaf: 72
+  feature_fraction: 0.7773649080892937
+  bagging_fraction: 0.684048763139862
+  bagging_freq: 0
+  lambda_l2: 0.5807121320422154
+  max_delta_step: 3.0284038527691015
+  max_bin: 511
+type_A_radar:
+  learning_rate: 0.0249064396938244
+  num_leaves: 26
+  min_data_in_leaf: 72
+  feature_fraction: 0.7760609974958406
+  bagging_fraction: 0.6488152939379115
+  bagging_freq: 3
+  lambda_l2: 0.5857968696153528
+  max_delta_step: 3.874121625621054
+  max_bin: 127
+type_B_radar_sensors:
+  learning_rate: 0.08912419537421662
+  num_leaves: 26
+  min_data_in_leaf: 71
+  feature_fraction: 0.7858161823560005
+  bagging_fraction: 0.9144558228951137
+  bagging_freq: 3
+  lambda_l2: 0.629527885651321
+  max_delta_step: 3.5247600027092503
+  max_bin: 511
+type_C_all:
+  learning_rate: 0.13046898156849712
+  num_leaves: 84
+  min_data_in_leaf: 63
+  feature_fraction: 0.861491226030192
+  bagging_fraction: 0.6366543736127168
+  bagging_freq: 0
+  lambda_l2: 0.7369093423383568
+  max_delta_step: 1.7053495006481616
+  max_bin: 511
+aircraft_A_radar:
+  learning_rate: 0.10958472967437742
+  num_leaves: 40
+  min_data_in_leaf: 27
+  feature_fraction: 0.7133380389045987
+  bagging_fraction: 0.7371243583409498
+  bagging_freq: 4
+  lambda_l2: 7.9352183075128195
+  max_delta_step: 0.7627053745963738
+  max_bin: 63

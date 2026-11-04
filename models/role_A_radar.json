@@ -1,0 +1,40 @@
+{
+ "target": "role",
+ "scenario": "A_radar",
+ "classes": [
+  "AEW&C",
+  "Air superiority fighter",
+  "Anti-radiation",
+  "Anti-ship",
+  "Attack",
+  "Bomber",
+  "CAS/attack",
+  "CCA",
+  "Decoy",
+  "EW/SEAD",
+  "Interceptor",
+  "Land-attack",
+  "MALE/HALE",
+  "Maritime patrol",
+  "Multirole fighter",
+  "Naval/ASW",
+  "One-way attack",
+  "Reconnaissance",
+  "Special mission (ISR/EW)",
+  "Strike fighter",
+  "Tactical bomber",
+  "Tactical recon",
+  "Tanker",
+  "Trainer/light combat",
+  "Transport",
+  "Utility/transport"
+ ],
+ "temperature": 1.065303766130708,
+ "features": [
+  "speed",
+  "altitude",
+  "climb_rate",
+  "turn_rate",
+  "rcs"
+ ]
+}

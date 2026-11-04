@@ -1,0 +1,23 @@
+{
+ "target": "type",
+ "scenario": "B_radar_sensors",
+ "classes": [
+  "Fighter-class fixed-wing",
+  "Heavy fixed-wing",
+  "Missile/munition",
+  "Rotary-wing",
+  "UAV"
+ ],
+ "temperature": 0.9494243907636672,
+ "features": [
+  "speed",
+  "altitude",
+  "climb_rate",
+  "turn_rate",
+  "rcs",
+  "engine_count",
+  "engine_type",
+  "afterburner",
+  "ir_category"
+ ]
+}

@@ -81,6 +81,18 @@ def save_model(booster, out_dir, target, scenario, suffix=""):
     return path
 
 
+def save_model_meta(out_dir, target, scenario, classes, temperature, feature_columns, suffix=""):
+    """Write <alias>_<scenario><suffix>.json next to the model: class labels, calibration
+    temperature and input columns, so the API can serve the model without the dataset.
+    Aircraft meta contains the roster (class names) -> gitignored like aircraft models."""
+    import json
+    path = Path(out_dir) / f"{TARGET_ALIAS[target]}_{scenario}{suffix}.json"
+    path.write_text(json.dumps({"target": target, "scenario": scenario, "classes": list(classes),
+                                "temperature": float(temperature), "features": list(feature_columns)},
+                               indent=1), encoding="utf-8")
+    return path
+
+
 # BASELINES
 
 def prior_baseline(y_train, n_classes, n_rows):

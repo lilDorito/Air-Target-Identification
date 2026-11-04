@@ -1,0 +1,27 @@
+{
+ "target": "type",
+ "scenario": "C_all",
+ "classes": [
+  "Fighter-class fixed-wing",
+  "Heavy fixed-wing",
+  "Missile/munition",
+  "Rotary-wing",
+  "UAV"
+ ],
+ "temperature": 0.11904713967090196,
+ "features": [
+  "speed",
+  "altitude",
+  "climb_rate",
+  "turn_rate",
+  "rcs",
+  "engine_count",
+  "engine_type",
+  "afterburner",
+  "ir_category",
+  "length_m",
+  "wingspan_m",
+  "mtow_kg",
+  "first_flight"
+ ]
+}

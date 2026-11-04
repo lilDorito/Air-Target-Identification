@@ -40,6 +40,9 @@ def run(spec_df, cfg, targets=None, scenarios=None, ablation=False, tuned_params
                 train.save_model(booster, model_dir, target, scenario, suffix="" if not ablation else "_ablation")
 
             calibrator = calibrate.fit_calibrator(train.predict_proba(booster, X_va), y_va, cfg.get("calibration", "temperature"))
+            if model_dir:
+                train.save_model_meta(model_dir, target, scenario, classes, calibrator.temperature,
+                                      list(X_tr.columns), suffix="" if not ablation else "_ablation")
 
             def add(model, split, proba, y, extra=None):
                 rows.append({"target": target, "scenario": scenario, "model": model, "split": split, "data": tag, **evaluate.score(proba, y), **(extra or {})})

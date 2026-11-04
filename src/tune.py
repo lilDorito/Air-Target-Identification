@@ -1,15 +1,15 @@
 # Hyperparameter tuning with Optuna
-from pathlib import Path
 
+from pathlib import Path
 import lightgbm as lgb
 import numpy as np
 import optuna
 import yaml
-
 from . import train
 
 def subsample_per_aircraft(obs, n_per_aircraft, seed):
     # seeded shuffle then keep n observations of every aircraft
+
     rng = np.random.default_rng(seed)
     selected = []
 
@@ -23,6 +23,7 @@ def subsample_per_aircraft(obs, n_per_aircraft, seed):
 
 def search_space(trial):
     # return a dict of lgbm params suggested by the trial
+
     return {
         "learning_rate": trial.suggest_float(
             "learning_rate", 0.01, 0.2, log=True
@@ -53,15 +54,12 @@ def search_space(trial):
 def tune(X_train, y_train, X_val, y_val, cfg, target, n_classes, study_name=None):
     # run one study: TPESampler(seed) + MedianPruner, early stopping per trial, optionally report val loss to the trial every N rounds for pruning
     # return the study
+
     tuning_cfg = cfg["tuning"]
     lgb_cfg = cfg["lightgbm"]
 
-    sampler = optuna.samplers.TPESampler(
-        seed=tuning_cfg["seed"]
-    )
-    pruner = optuna.pruners.MedianPruner(
-        n_warmup_steps=tuning_cfg["pruning_warmup"]
-    )
+    sampler = optuna.samplers.TPESampler(seed=tuning_cfg["seed"])
+    pruner = optuna.pruners.MedianPruner(n_warmup_steps=tuning_cfg["pruning_warmup"])
 
     study = optuna.create_study(
         study_name=study_name,
@@ -75,9 +73,7 @@ def tune(X_train, y_train, X_val, y_val, cfg, target, n_classes, study_name=None
         overrides["feature_pre_filter"] = False
         overrides["metric"] = "multi_logloss"
 
-        params = train.lgb_params(
-            cfg, n_classes, overrides
-        )
+        params = train.lgb_params(cfg, n_classes, overrides)
 
         weights = (
             train.balanced_weights(y_train, n_classes)
@@ -85,8 +81,8 @@ def tune(X_train, y_train, X_val, y_val, cfg, target, n_classes, study_name=None
             else None
         )
 
-        # Rebuild both datasets for every trial:
-        # max_bin and min_data_in_leaf affect Dataset construction.
+        # rebuild both datasets for every trial:
+        # max_bin and min_data_in_leaf affect dataset construction
         dtrain = lgb.Dataset(
             X_train,
             label=y_train,
@@ -128,13 +124,7 @@ def tune(X_train, y_train, X_val, y_val, cfg, target, n_classes, study_name=None
             num_boost_round=lgb_cfg["n_estimators"],
             valid_sets=[dval],
             valid_names=["val"],
-            callbacks=[
-                lgb.early_stopping(
-                    lgb_cfg["early_stopping_rounds"],
-                    verbose=False,
-                ),
-                pruning_callback,
-            ],
+            callbacks=[lgb.early_stopping(lgb_cfg["early_stopping_rounds"], verbose=False), pruning_callback],
         )
 
         return booster.best_score["val"]["multi_logloss"]
@@ -150,16 +140,13 @@ def tune(X_train, y_train, X_val, y_val, cfg, target, n_classes, study_name=None
 
 def tune_all(splits, spec_df, cfg, targets=None, scenarios=None, out_path=None):
     # loop targets x scenarios, build X/y with train.make_xy, call tune(), save with save_best()
+
     targets = targets or cfg["targets"]
     scenarios = scenarios or list(cfg["scenarios"])
 
     tuning_cfg = cfg["tuning"]
 
-    train_obs = subsample_per_aircraft(
-        splits["train"],
-        tuning_cfg["samples_per_aircraft_train"],
-        tuning_cfg["seed"],
-    )
+    train_obs = subsample_per_aircraft(splits["train"], tuning_cfg["samples_per_aircraft_train"], tuning_cfg["seed"])
     val_obs = splits["val"]
 
     studies = {}
@@ -169,12 +156,8 @@ def tune_all(splits, spec_df, cfg, targets=None, scenarios=None, out_path=None):
         n_classes = len(classes)
 
         for scenario in scenarios:
-            X_train, y_train = train.make_xy(
-                train_obs, cfg, scenario, target, classes
-            )
-            X_val, y_val = train.make_xy(
-                val_obs, cfg, scenario, target, classes
-            )
+            X_train, y_train = train.make_xy(train_obs, cfg, scenario, target, classes)
+            X_val, y_val = train.make_xy(val_obs, cfg, scenario, target, classes)
 
             key = f"{train.TARGET_ALIAS[target]}_{scenario}"
 
@@ -189,9 +172,8 @@ def tune_all(splits, spec_df, cfg, targets=None, scenarios=None, out_path=None):
 
             studies[key] = study
 
-            print(
-                f"{key}: best validation log loss = "
-                f"{study.best_value:.4f}"
+            print(f"{key}: best validation log loss = "
+                  f"{study.best_value:.4f}"
             )
 
     path = out_path or tuning_cfg["best_params_path"]
@@ -202,6 +184,7 @@ def tune_all(splits, spec_df, cfg, targets=None, scenarios=None, out_path=None):
 
 def save_best(studies, path):
     # write {key: best_params} to yaml
+
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -223,6 +206,7 @@ def save_best(studies, path):
 def load_best(path):
     # read the yaml back as {key: params}
     # return {} if the file does not exist yet
+
     path = Path(path)
 
     if not path.exists():
