@@ -80,18 +80,34 @@ class Service:
 
     # inference
 
-    def _proba(self, target, scenario, observations):
+    def _logits(self, target, scenario, observations):
+
         model = self.models[(target, scenario)]
         frame = pd.DataFrame([{col: obs.get(col) for col in model.features} for obs in observations], columns=model.features)
         for col in frame.columns:
             if col not in ("engine_type", "afterburner", "ir_category"):
                 frame[col] = pd.to_numeric(frame[col], errors="coerce")
         raw = model.booster.predict(features.encode(frame))
-        logits = np.log(np.clip(raw, 1e-12, 1.0)) / model.temperature
+        return model.classes, np.log(np.clip(raw, 1e-12, 1.0)) / model.temperature
+
+    def _proba(self, target, scenario, observations):
+        classes, logits = self._logits(target, scenario, observations)
         combined = logits.sum(axis=0)
         combined -= combined.max()
         p = np.exp(combined)
-        return model.classes, p / p.sum()
+        return classes, p / p.sum()
+
+    def _consistency(self, scenario, observations):
+        if len(observations) < 2 or ("type", scenario) not in self.models:
+            return []
+        classes, logits = self._logits("type", scenario, observations)
+        p = np.exp(logits - logits.max(axis=1, keepdims=True))
+        p /= p.sum(axis=1, keepdims=True)
+        top = logits.sum(axis=0).argmax()
+        odd = [str(i + 1) for i, row in enumerate(p) if row[top] < 0.05]
+        if not odd:
+            return []
+        return [f"Snapshot {', '.join(odd)} does not fit a {classes[top].lower()} target like the rest of the track. A track should be one contact, so check the readings."]
 
     @staticmethod
     def _top(classes, proba, k):
@@ -105,7 +121,7 @@ class Service:
         if countries and self.mode != "full":
             raise PermissionError("The country filter needs the private (full) version")
 
-        result = {"scenario": scenario, "snapshots": len(observations), "mode": self.mode, "filter": sorted(countries) if countries else None, "aircraft": None}
+        result = {"scenario": scenario, "snapshots": len(observations), "mode": self.mode, "filter": sorted(countries) if countries else None, "aircraft": None, "warnings": self._consistency(scenario, observations)}
 
         if self.mode == "full" and ("name", scenario) in self.models:
             classes, proba = self._proba("name", scenario, observations)

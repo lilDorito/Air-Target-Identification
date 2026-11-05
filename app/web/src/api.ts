@@ -28,6 +28,7 @@ export type Prediction = {
   aircraft: AircraftCandidate[] | null;
   role?: { source: string; top: Ranked[] };
   type?: { source: string; top: Ranked[] };
+  warnings?: string[];
 };
 
 async function call<T>(path: string, init?: RequestInit): Promise<T> {

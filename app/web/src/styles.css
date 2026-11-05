@@ -169,9 +169,12 @@ button.link { border: 0; padding: 4px 2px; color: var(--accent); text-decoration
 .ranking h3 { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
 .source { font: 400 0.85rem var(--body); color: var(--ink-soft); }
 .ranking ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.ranking li { display: grid; grid-template-columns: minmax(0, 15rem) 1fr 3.2rem; align-items: center; gap: 12px; }
-.ranking .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ranking .name small { color: var(--ink-soft); font-size: 0.85rem; margin-left: 6px; }
+.ranking li { display: grid; grid-template-columns: minmax(0, 20rem) 1fr 3.2rem; align-items: center; gap: 12px; }
+.ranking .name { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 6px; min-width: 0; }
+.ranking .name .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; max-width: 100%; }
+.ranking .name .kind { color: var(--ink-soft); font-size: 0.85rem; white-space: nowrap; }
+.callsign { color: var(--ink-soft); font-weight: 400; }
+.readout-name .callsign { font-weight: 500; }
 .ranking li.lead .name { font-weight: 600; }
 .bar { height: 8px; background: #dde5e9; border-radius: 2px; overflow: hidden; }
 .bar span { display: block; height: 100%; background: var(--ink); border-radius: 2px; transform-origin: left; animation: grow 0.5s ease-out both; }
@@ -187,7 +190,6 @@ button.link { border: 0; padding: 4px 2px; color: var(--accent); text-decoration
   .shell { padding: 24px 16px 48px; }
   .masthead h1 { font-size: 2.1rem; }
   .ranking li { grid-template-columns: minmax(0, 1fr) 5rem 3rem; }
-  .ranking .name small { display: none; }
 }
 @media (max-width: 420px) {
   .fields { grid-template-columns: 1fr; }
@@ -197,5 +199,3 @@ button.link { border: 0; padding: 4px 2px; color: var(--accent); text-decoration
   .bar span { animation: none; }
   .origins summary::before { transition: none; }
 }
-
-.ranking .name .kind { color: var(--ink-soft); font-size: 0.85rem; margin-left: 6px; }

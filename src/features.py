@@ -41,9 +41,3 @@ def encode(X):
         X["engine_type"] = pd.Categorical(X["engine_type"], categories=ENGINE_TYPES)
 
     return X
-
-
-def drop_estimated(X, mask):
-    X = X.copy()
-    X[mask] = float("nan")
-    return X

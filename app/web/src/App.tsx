@@ -79,7 +79,7 @@ function Bars({ items, title, source }: { items: Ranked[]; title: string; source
         {items.map((item, i) => (
           <li key={item.label} className={i === 0 ? "lead" : undefined}>
             <span className="name">
-              {item.label}
+              <span className="label">{item.label}</span>
               {title === "Role" && roleKind(item.label) && <span className="kind">{roleKind(item.label)}</span>}
             </span>
             <span className="bar" aria-hidden="true">
@@ -201,8 +201,8 @@ export default function App() {
 
       {meta && !full && (
         <p className="notice">
-          Public demo: this version identifies role and type only. Naming the exact aircraft and filtering by
-          country of origin are available in the private version.
+          Public demo: this version identifies role and type only. Naming the exact aircraft and limiting the
+          answer to the countries that operate it are available in the private version.
         </p>
       )}
 
@@ -360,11 +360,14 @@ export default function App() {
                 </p>
                 {lead ? (
                   <>
-                    <p className="readout-name">{lead.label}</p>
+                    <p className="readout-name">
+                      {lead.label}
+                      {lead.callsign && <span className="callsign"> {lead.callsign}</span>}
+                    </p>
                     <p className="readout-detail">
-                      {[lead.callsign, lead.manufacturer, lead.country].filter(Boolean).join(" / ")}
+                      {[lead.manufacturer, lead.country].filter(Boolean).join(" / ")}
                       <span>
-                        {lead.role}, {lead.type.toLowerCase()}
+                        {lead.role}, {TYPE_WORD[lead.type] ?? lead.type.toLowerCase()}
                       </span>
                     </p>
                     <p className="readout-p">{pct(lead.probability)}</p>
@@ -378,6 +381,7 @@ export default function App() {
                     </>
                   )
                 )}
+                {result.warnings?.map((w) => (<p key={w} className="notice warn">{w}</p>))}
               </div>
 
               {result.aircraft && (
@@ -386,12 +390,14 @@ export default function App() {
                   <ol>
                     {result.aircraft.map((a, i) => (
                       <li key={a.label} className={i === 0 ? "lead" : undefined}>
-                        <span className="name">
-                          {a.label}
-                          <small>
-                            {a.role}
-                            {a.country ? `, ${a.country}` : ""}
-                          </small>
+                        <span className="name" title={[a.role, a.country].filter(Boolean).join(", ")}>
+                          <span className="label">
+                            {a.label}
+                            {a.callsign && <span className="callsign"> {a.callsign}</span>}
+                          </span>
+                          <span className="kind">
+                            {a.role}, {TYPE_WORD[a.type] ?? a.type.toLowerCase()}
+                          </span>
                         </span>
                         <span className="bar" aria-hidden="true">
                           <span style={{ width: `${Math.max(a.probability * 100, 0.8)}%` }} />
