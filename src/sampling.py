@@ -1,4 +1,5 @@
 # Turn spec rows into simulated sensor observations
+
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedGroupKFold
@@ -109,14 +110,7 @@ def family_holdout_splits(df, cfg):
 
     folds = {}
 
-    for fold, (train_idx, test_idx) in enumerate(
-        splitter.split(
-            X=df,
-            y=df["role"],
-            groups=df["family"]
-        ),
-        start=1
-    ):
+    for fold, (train_idx, test_idx) in enumerate(splitter.split(X=df, y=df["role"], groups=df["family"]), start=1):
         train_specs = df.iloc[train_idx]
         test_specs = df.iloc[test_idx]
 

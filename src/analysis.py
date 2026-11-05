@@ -29,16 +29,10 @@ def near_duplicate_pairs(df, top_n=20):
     cat = df[categorical_cols].to_numpy(dtype=object)
     cat_missing = pd.isna(cat)
 
-    cat_diff = (
-        (cat[:, None, :] != cat[None, :, :])
-        & ~cat_missing[:, None, :]
-        & ~cat_missing[None, :, :]
-    )
+    cat_diff = ((cat[:, None, :] != cat[None, :, :]) & ~cat_missing[:, None, :] & ~cat_missing[None, :, :])
 
     total += cat_diff.sum(axis=2)
-    count += (
-        (~cat_missing[:, None, :] & ~cat_missing[None, :, :]).sum(axis=2)
-    )
+    count += ((~cat_missing[:, None, :] & ~cat_missing[None, :, :]).sum(axis=2))
 
     distances = np.divide(
         total,
@@ -62,8 +56,4 @@ def near_duplicate_pairs(df, top_n=20):
 
     i, j = np.unravel_index(flat[selected], distances.shape)
 
-    return pd.DataFrame({
-        "aircraft_a": df["name"].to_numpy()[i],
-        "aircraft_b": df["name"].to_numpy()[j],
-        "distance": values[selected],
-    })
+    return pd.DataFrame({"aircraft_a": df["name"].to_numpy()[i], "aircraft_b": df["name"].to_numpy()[j], "distance": values[selected]})

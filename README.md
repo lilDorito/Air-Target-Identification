@@ -1,6 +1,6 @@
 # Air Target Identification from Sensor-Observable Characteristics
 
-> **Status:** models trained and tuned, notebook complete up to error analysis, web demo deployed. Still to do: figures (notebook section 8) and conclusions.
+> **Status:** complete. Models trained and tuned, notebook run end to end with figures and conclusions, web demo deployed.
 
 ## 1. Question
 
@@ -53,19 +53,36 @@ Test set, top-1 / top-5 accuracy in %, from [`results/metrics/bundle_results.csv
 - **Chance level** for the aircraft model is 0.2% top-1. One radar snapshot is genuinely ambiguous, because many types share speed and altitude ranges. Tracks are what make identification usable: ten snapshots roughly triple top-1 accuracy on radar only.
 - **Summing aircraft probabilities beats the dedicated role model** in A and B.
 - **Under distribution shift** (uniform speed, double noise), aircraft top-1 accuracy on radar only drops from 14.1% to 9.5%, and type from 91.3% to 86.2%.
-- **Calibration:** expected calibration error is at most 0.06 on the test set.
-- **Operator filter:** selecting a country cuts the candidates from 535 to the types it operates (97 for Russia, 67 for Ukraine), which sharply improves top-5 accuracy on radar only. Final numbers are in notebook section 5 (`results/metrics/operator_filter_results.csv`).
+- **Calibration:** expected calibration error is at most 0.06 on the test set. The raw models were already close to calibrated, so temperature scaling changed little.
+- **Operator filter:** selecting a country cuts the candidates from 535 to the types it operates. On that country's aircraft, radar-only top-1 goes from 22.5% to 44.2% for Russia (97 types) and from 24.8% to 50.7% for Ukraine (67 types); top-5 reaches 87.6% and 96.1%.
+- **Ablation:** with the rule-estimated cells removed, radar-only accuracy falls sharply: aircraft 14.1% → 4.7%, role 42.8% → 18.4%, type 91.3% → 55.7%. Almost every RCS value is an estimate, so radar-only results lean on those estimates.
+- **Unseen families:** when whole families are held out, type barely changes (90.1% vs 91.3% on radar only), but role drops, most in C (53.2% vs 98.9%). Size and year features help to recognise known aircraft, not new ones.
 
-Ablation, unseen-family, filter and error-analysis tables come from [`notebooks/main.ipynb`](notebooks/main.ipynb) and are saved to `results/metrics/`. _TODO:_ figures in `results/figures/`.
+All tables are in `results/metrics/` and all figures in [`results/figures/`](results/figures/) (notebook section 8). The most useful ones:
+
+- `performance_top1.png`, `performance_top5.png`: models against baselines
+- `track_length.png`: accuracy against number of snapshots
+- `operator_filter.png`: filter on and off
+- `reliability.png`: calibration
+- `ablation.png`, `unseen_families.png`, `distribution_shift.png`: robustness checks
+- `feature_importance_*.png`, `feature_space_*.png`, `confusion_*_B.png`: what the models use and where they get it wrong
 
 ## 5. Conclusions
 
-_TODO_
+- **One radar snapshot is not enough to name an aircraft.** The model gets it right 14% of the time on radar alone (chance is 0.2%) and has it in the top 5 about 40% of the time. Engine and IR cues double that.
+- **Watching longer helps the most.** Ten snapshots of the same contact bring radar-only top-1 to 44% and top-5 to 79%; with sensors, 58% and 92%.
+- **Knowing who could be flying helps just as much.** Limiting the answer to one country's aircraft roughly doubles top-1 accuracy, with no retraining.
+- **Broad questions are easy, narrow ones are hard.** The type (fighter, heavy, helicopter, UAV, missile) is right 91% of the time on radar alone; the role about 43%. Summing the aircraft model's answers gives a better role than the dedicated role model, so one aircraft model can answer all three questions.
+- **The probabilities can be trusted.** When the model says 60%, it is right about 60% of the time.
+- **The results depend on the estimated values.** Radar cross-section is almost all estimated; without the estimates, radar-only accuracy drops by 40–70%. Real accuracy depends on how good those estimates are.
+- **The models know aircraft, not rules.** They recognise the coarse type of a family they have never seen, but not its role. Scenario C mostly works as a lookup of the spec sheet.
+
+Next steps would be recorded tracks instead of simulated ones, RCS that depends on viewing angle, better sourced RCS figures, and combining tracks with the operator filter in the app.
 
 ## 6. Limitations
 
 - **Simulated observations.** Training data is sampled from published spec ranges, not recorded sensor tracks. Real radar noise, aspect-dependent RCS and manoeuvre patterns are not modelled.
-- **Estimated inputs.** About 36% of filled feature cells are rule-based estimates, mostly RCS, turn rate, climb and minimum altitude. The ablation measures how much the models rely on them.
+- **Estimated inputs.** About 36% of filled feature cells are rule-based estimates, mostly RCS (98.5%), turn rate (100%), climb and minimum altitude. The ablation shows the radar-only models rely heavily on them.
 - **Near-identical variants** (e.g. Su-24M / Su-24MR) cannot be separated from kinematics. Notebook section 1.7 counts them.
 - **Scenario C** is close to a lookup of the spec sheet, which is why it is an upper bound and not a result.
 - **Operator lists** are a snapshot (November 2026) and change with every transfer and retirement.
@@ -101,7 +118,7 @@ cd app/web && npm install && npm run dev # http://localhost:5173
 
 ## 9. AI use
 
-See [`data/AI_DISCLOSURE.md`](data/AI_DISCLOSURE.md).
+See [`docs/AI_DISCLOSURE.md`](docs/AI_DISCLOSURE.md).
 
 ## 10. Authors
 

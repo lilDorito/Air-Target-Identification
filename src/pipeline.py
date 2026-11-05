@@ -23,7 +23,7 @@ def run(spec_df, cfg, targets=None, scenarios=None, ablation=False, tuned_params
     targets = targets or cfg["targets"]
     scenarios = scenarios or list(cfg["scenarios"])
     spec = blank_estimated(spec_df) if ablation else spec_df
-    splits = splits or sampling.make_splits(spec, cfg)
+    splits = sampling.make_splits(spec, cfg) if ablation or splits is None else splits
     tag = "ablation" if ablation else "full"
 
     rows, artefacts = [], {}

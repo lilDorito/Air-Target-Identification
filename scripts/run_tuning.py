@@ -1,10 +1,8 @@
 # Run the Optuna tuning and save the best params
 
-"""
-python scripts/run_tuning.py # all targets x scenarios
-python scripts/run_tuning.py --targets role type # skip the slow aircraft studies
-python scripts/run_tuning.py --targets name --scenarios A_radar
-"""
+# python scripts/run_tuning.py     - all targets x scenarios
+# python scripts/run_tuning.py --targets role type     - skip the slow aircraft studies
+# python scripts/run_tuning.py --targets name --scenarios A_radar
 
 import argparse
 import sys
