@@ -10,6 +10,7 @@ The main assistant was Claude (Anthropic). Other general-purpose chat assistants
 | Plots | Suggested ideas for figures; we implemented the ones we found useful, not without the refactoring assistant help of course |
 | Documentation | README, `docs/` and the notebook's explanatory text were largely written by AI from our dictation and then edited by us |
 | Data | Web research, AI-recalled reference figures and audit passes (see section 5) |
+| Web app | primarily AI-generated design on top of our api, verified and corrected by us |
 | Consulting | Discussing approaches and deployment strategy |
 
 ## 2. Influence on methodological decisions
